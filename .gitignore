@@ -1,0 +1,10 @@
+# Ignore all __pycache__ directories
+**/__pycache__/
+
+# Ignore all .pyc files
+**/*.pyc
+
+tests/__data__/**/*
+
+.venv/
+.DS_Store
