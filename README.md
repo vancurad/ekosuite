@@ -22,9 +22,17 @@ A small proof of concept exists with MPSAS (Magnitude per square arc seconds) vi
 
 <img width="912" alt="Screenshot 2025-06-03 at 8 36 44 AM" src="https://github.com/user-attachments/assets/c8efe0be-cdd4-472e-b80d-e5fd1656608c" />
 
-## Install & Run
+## Build & Run
 
-This should really be as easy as opening command line and typing `make install; make run`
+This should really be as easy as opening command line and typing `make build; make run`
+
+### Generate MacOS app
+
+After having built the application with `make build` you can generate a Mac application with `make macapp`
+
+### Run tests
+
+Unit tests exist and can be run with `make test`.
 
 ## How to
 

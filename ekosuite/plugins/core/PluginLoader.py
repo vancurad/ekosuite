@@ -1,24 +1,30 @@
 import importlib
-import os
+import sys
+import pkgutil
 
 from ekosuite.plugins.core.PluginInterface import PluginInterface
+
+import ekosuite.plugins.plugin_implementations
+from ekosuite.plugins.plugin_implementations import ProjectAssistant
 
 class PluginLoader:
     def __init__(self):
         self.plugins: list[type[PluginInterface]] = []
     
     def queryPlugins(self):
-        # Directory where plugins are stored
-        plugins_dir = "ekosuite/plugins/plugin-implementations"
+        
+        # If running in a PyInstaller bundle, return hard-coded plugins, else development plugins
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            self.plugins = [ProjectAssistant.ProjectAssistant]
+            return
 
-        # Dynamically load and execute plugins
-        for filename in os.listdir(plugins_dir):
-            if filename.endswith(".py"):
-                module_name = filename[:-3]
-                module = importlib.import_module(f"ekosuite.plugins.plugin-implementations.{module_name}")
-                for attr_name in dir(module):
-                    attr = getattr(module, attr_name)
-                    if isinstance(attr, type):  # Ensure it's a class
-                        if issubclass(attr, PluginInterface) and attr is not PluginInterface:
-                            print(f"Found plugin: {attr.__name__}")
-                            self.plugins.append(attr)
+        package = ekosuite.plugins.plugin_implementations
+        for finder, name, is_pkg in pkgutil.iter_modules(package.__path__, package.__name__ + '.'):
+            full_name = package.__name__ + '.' + name if '.' not in name else name
+            plugin = importlib.import_module(full_name)
+            for attr_name in dir(plugin):
+                attr = getattr(plugin, attr_name)
+                if isinstance(attr, type):  # Ensure it's a class
+                    if issubclass(attr, PluginInterface) and attr is not PluginInterface:
+                        print(f"Found plugin: {attr.__name__}")
+                        self.plugins.append(attr)

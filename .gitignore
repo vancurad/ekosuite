@@ -8,3 +8,5 @@ tests/__data__/**/*
 
 .venv/
 .DS_Store
+build
+dist
