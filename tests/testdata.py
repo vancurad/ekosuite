@@ -2,6 +2,7 @@ import asyncio
 import os
 import time
 import shutil
+from typing import Callable
 import numpy as np
 from datetime import datetime
 from astropy.nddata import CCDData
@@ -86,7 +87,7 @@ def environment(fileChangeListeners: set[FileSystemImageChangeListener] = set())
         "fileSystemObserver": fileSystemObserver,
     }
 
-def wait_after_saving_images(environment, nimages: int):
+def wait_after_saving_images(environment, nimages: int, after_listener_setup: Callable | None = None):
     image_count = 0
 
     def insertImage(image):
@@ -95,6 +96,9 @@ def wait_after_saving_images(environment, nimages: int):
         image_count += 1
 
     environment['fileSystemObserver'].addListener(FileSystemImageChangeListener(lambda image: insertImage(image)))
+
+    if after_listener_setup is not None:
+        after_listener_setup()
 
     # Await SQL inserts
     ct = 0

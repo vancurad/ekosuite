@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS fits_files (
 
 CREATE TABLE IF NOT EXISTS image_analysis (
     id INTEGER PRIMARY KEY,
-    image_id INTEGER NOT NULL,
+    image_id INTEGER UNIQUE NOT NULL,
     fwhm REAL,
     snr REAL,
     eccentricity REAL,
@@ -94,10 +94,10 @@ CREATE TABLE IF NOT EXISTS image_analysis (
     FOREIGN KEY (image_id) REFERENCES fits_files(id)
 );
 
-CREATE INDEX idx_fits_files_filter ON fits_files(filter);
-CREATE INDEX idx_fits_files_object ON fits_files(object);
-CREATE INDEX idx_fits_files_image_type_generic ON fits_files(image_type_generic);
-CREATE INDEX idx_fits_files_create_time ON fits_files(create_time);
+CREATE INDEX IF NOT EXISTS idx_fits_files_filter ON fits_files(filter);
+CREATE INDEX IF NOT EXISTS idx_fits_files_object ON fits_files(object);
+CREATE INDEX IF NOT EXISTS idx_fits_files_image_type_generic ON fits_files(image_type_generic);
+CREATE INDEX IF NOT EXISTS idx_fits_files_create_time ON fits_files(create_time);
 
 CREATE TABLE IF NOT EXISTS targets (
     id INTEGER PRIMARY KEY,

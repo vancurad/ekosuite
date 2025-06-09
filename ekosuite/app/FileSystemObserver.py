@@ -14,11 +14,20 @@ class FileSystemImageChangeListener:
 class FileSystemObserver:
     def __init__(self, db: AppDB, listeners: set[FileSystemImageChangeListener] = set()):
         self._db = db
-        self._folderObservers = dict[str: DataStream]()
+        self._folderObservers = dict[str, DataStream]()
         self._listeners = listeners
         self._projectDB = ProjectDB(self._db)
-        self._activeThreads = dict[str: Thread]()
+        self._activeThreads = dict[str, Thread]()
         self.setupObservers()
+
+    def __del__(self):
+        for folder, observer in self._folderObservers.items():
+            if observer is not None:
+                observer.stop()
+        for thread in self._activeThreads.values():
+            thread.join()
+        self._folderObservers.clear()
+        self._activeThreads.clear()
     
     def setupObservers(self):
         for folder in self._projectDB.selectedFolders:
@@ -33,11 +42,12 @@ class FileSystemObserver:
                 self._activeThreads[folder] = scout_thread
         for folder in self._folderObservers.keys():
             if folder not in self._projectDB.selectedFolders:
-                self._folderObservers[folder] = None
+                self._folderObservers.pop(folder)
                 self._activeThreads[folder].join()
     
     def listen(self, image):
-        for listener in self._listeners:
+        listeners = self._listeners.copy()
+        for listener in listeners:
             listener.listen(image)
     
     def addListener(self, listener: FileSystemImageChangeListener):

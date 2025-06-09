@@ -17,7 +17,7 @@ class DataStream(wde.FileSystemEventHandler):
         self._fileObserver.start()
     
     def on_created(self, event):
-        if not event.is_directory and event.src_path.lower().endswith('.fits'):
+        if not event.is_directory and (event.src_path.lower().endswith('.fits') or event.src_path.lower().endswith('.xisf')):
             self.receive(event.src_path)
     
     def receive(self, source: str):

@@ -18,7 +18,7 @@ class AppDB:
                 ctypes.windll.kernel32.SetFileAttributesW(self.folder, FILE_ATTRIBUTE_HIDDEN)
         self.dbFile = os.path.join(self.folder, "ekosuite.sqlite")
 
-        self.__conn: sqlite3.Connection = None
+        self.__conn: sqlite3.Connection
         self.queue = Queue()
         self.thread = threading.Thread(target=self._worker, daemon=True)
         self.thread.start()
@@ -57,6 +57,7 @@ class AppDB:
 
     def _worker(self):
         while True:
+            result_queue = None
             try:
                 task, result_queue = self.queue.get()
                 if task is None:  # Sentinel to stop the thread
