@@ -6,15 +6,9 @@ import time
 import asyncio
 from datetime import datetime
 
-def _cleanup():
-    for filename in os.listdir(testdata.test_data_folder()):
-        file_path = os.path.join(testdata.test_data_folder(), filename)
-        if os.path.isfile(file_path):
-            os.remove(file_path)
-
 @pytest.fixture(autouse=True)
 def setup_before_each_test():
-    _cleanup()
+    testdata.cleanup()
     yield
     # _cleanup()
 

@@ -4,6 +4,7 @@ SHELL := /bin/bash
 # Define variables
 VENV_DIR = .venv
 PYTHON = $(VENV_DIR)/bin/python3
+PYTEST = $(VENV_DIR)/bin/pytest
 PIP = $(VENV_DIR)/bin/pip3
 
 # Targets
@@ -30,7 +31,7 @@ macapp:
 	$(PYTHON) "$(VENV_DIR)/bin/PyInstaller" ekosuite.spec
 
 test:
-	pytest tests/
+	$(PYTEST) tests/
 
 run:
 	$(PYTHON) ekosuite.py

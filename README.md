@@ -1,3 +1,5 @@
+[![Makefile CI](https://github.com/vancurad/ekosuite/actions/workflows/makefile.yml/badge.svg?branch=main)](https://github.com/vancurad/ekosuite/actions/workflows/makefile.yml)
+
 # Ekosuite
 
 Ekosuite is a simple Python application for organizing excessively large collections of Astrophotography images. Its name is inspired by [Ekos](https://github.com/KDE/kstars), an application excelling at remote controlling and automating telescope control and imaging but is also compatible with other software, such as [N.I.N.A.](https://nighttime-imaging.eu).
