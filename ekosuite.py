@@ -17,4 +17,8 @@ async def main():
     sys.exit()
 
 if __name__ == "__main__":
+    args = sys.argv[1:]
+    if args:
+        if '--validate-build' in args:
+            sys.exit(0)
     asyncio.run(main())

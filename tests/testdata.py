@@ -1,6 +1,7 @@
 import asyncio
 import os
 import time
+import shutil
 import numpy as np
 from datetime import datetime
 from astropy.nddata import CCDData
@@ -11,6 +12,17 @@ from ekosuite import ProjectDB
 
 def test_data_folder():
     return os.path.join(os.path.dirname(__file__), "__data__")
+
+def cleanup():
+    folder = test_data_folder()
+    if not os.path.exists(folder):
+        return
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+        elif os.path.isdir(file_path):
+            shutil.rmtree(file_path, ignore_errors=True)
 
 def create_test_fits(filename='test_image.fits', 
                      shape=(100, 100), 

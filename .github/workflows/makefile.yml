@@ -1,0 +1,67 @@
+name: Makefile CI
+
+on: 
+  push:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python (universal2)
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+
+    - name: Install dependencies
+      run: make build
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: ${{ github.workspace }}/.venv/
+        if-no-files-found: error
+        include-hidden-files: true
+
+  macos-bundle:
+    runs-on: macos-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: ${{ github.workspace }}/.venv/
+      
+    - name: Restore executable permissions to .venv
+      run: chmod -R u+x .venv/bin
+    
+    - name: Bundle Mac App
+      run: make macapp
+    
+    - name: Verify Mac App
+      run: ./dist/ekosuite.app/Contents/MacOS/ekosuite --validate-build
+  
+  test:
+    runs-on: macos-latest
+    needs: build
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: ${{ github.workspace }}/.venv/
+
+    - name: Restore executable permissions to .venv
+      run: chmod -R u+x .venv/bin
+
+    - name: Run Tests
+      run: make test
